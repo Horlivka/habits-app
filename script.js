@@ -22,12 +22,20 @@ function addHabit() {
   }
   habits.push({
     text: habitText,
-    done: false,
-    completedDate: [],
+    completedDates: [],
   });
   input.value = "";
   saveHabits();
   renderHabits();
+}
+
+function isCompletedToday(habit) {
+  let today = getTodayDate();
+  return habit.completedDates.includes(today);
+}
+
+function getTodayDate() {
+  return new Date().toISOString().split("T")[0];
 }
 
 function loadHabits() {
@@ -42,7 +50,9 @@ function loadHabits() {
 
 function updateStatistics() {
   let totalHabits = habits.length;
-  let completedHabits = habits.filter((habit) => habit.done).length;
+  let completedHabits = habits.filter((habit) =>
+    isCompletedToday(habit),
+  ).length;
 
   countHabits.textContent = "Total habits: " + totalHabits;
   doneHabits.textContent = "Completed: " + completedHabits;
@@ -72,25 +82,27 @@ function getVisibleHabits() {
   let visibleHabits = [...habits];
 
   if (filterHabits === "Active") {
-    visibleHabits = habits.filter((habit) => !habit.done);
+    visibleHabits = habits.filter((habit) => !isCompletedToday(habit));
   } else if (filterHabits === "Completed") {
-    visibleHabits = habits.filter((habit) => habit.done);
+    visibleHabits = habits.filter((habit) => isCompletedToday(habit));
   }
-  
+
   return visibleHabits;
 }
 
 function renderHabits() {
   list.textContent = "";
   let visibleHabits = getVisibleHabits();
+  let today = getTodayDate();
 
   for (let habit of visibleHabits) {
+    let completedToday = isCompletedToday(habit);
     let index = habits.indexOf(habit);
 
     let li = document.createElement("li");
     li.textContent = habit.text;
 
-    if (habit.done) {
+    if (completedToday) {
       li.classList.add("done");
     }
 
@@ -125,10 +137,16 @@ function renderHabits() {
     });
 
     let doneBtn = document.createElement("button");
-    doneBtn.textContent = habit.done ? "Undo" : "Done";
+    doneBtn.textContent = completedToday ? "Completed today" : "Complete today";
 
     doneBtn.addEventListener("click", function () {
-      habit.done = !habit.done;
+      if (completedToday) {
+        habit.completedDates = habit.completedDates.filter(
+          (date) => date !== today,
+        );
+      } else {
+        habit.completedDates.push(today);
+      }
       saveHabits();
       renderHabits();
     });
@@ -161,7 +179,7 @@ completedBtn.addEventListener("click", function () {
   renderHabits();
 });
 clearBtn.addEventListener("click", function () {
-  habits = habits.filter((habit) => !habit.done);
+  habits = habits.filter((habit) => !isCompletedToday(habit));
   saveHabits();
   renderHabits();
 });

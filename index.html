@@ -9,22 +9,37 @@
 </head>
 
 <body>
+    <main class="app">
+        <h1 class="appTitle">Habit Tracker Pro</h1>
+        <p class="titleText">Small habits. Big changes</p>
+        <div class="addForm">
+            <input type="text" id="input">
+            <button id="addButton">Add</button>
+        </div>
+        <div class="filters">
+            <button id="allBtn">All habits</button>
+            <button id="activeBtn">Active habits</button>
+            <button id="completedBtn">Completed habits</button>
+        </div>
 
-    <input type="text" id="input">
-    <button id="addButton">Add Habit</button>
-    <button id="allBtn">All habits</button>
-    <button id="activeBtn">Active habits</button>
-    <button id="completedBtn">Completed habits</button>
-    <button id="clearBtn">Clear completed</button>
-    <ul id="habitsList"></ul>
-    <p id="countHabits"></p>
-    <p id="doneHabits"></p>
+        <button id="clearBtn">Clear completed</button>
 
-    <div id="progressBar">
-        <div id="progressFill"></div>
-    </div>
+        <ul id="habitsList"></ul>
+        <div class="stats">
+            <p id="countHabits"></p>
+            <p id="doneHabits"></p>
+        </div>
 
-    <p id="progressText"></p>
+
+        <div class="progress">
+            <div id="progressBar">
+                <div id="progressFill"></div>
+            </div>
+
+            <p id="progressText"></p>
+        </div>
+    </main>
+
 
 
 
