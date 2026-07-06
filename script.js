@@ -3,7 +3,7 @@ let addButton = document.querySelector("#addButton");
 let allBtn = document.querySelector("#allBtn");
 let activeBtn = document.querySelector("#activeBtn");
 let completedBtn = document.querySelector("#completedBtn");
-let clearBtn = document.querySelector("#clearBtn");
+
 
 let list = document.querySelector("#habitsList");
 let countHabits = document.querySelector("#countHabits");
@@ -43,6 +43,14 @@ function loadHabits() {
 
   if (savedHabits) {
     habits = JSON.parse(savedHabits);
+
+    habits = habits.map((habit) => {
+      if (!habit.completedDates) {
+        habit.completedDates = [];
+      }
+
+      return habit;
+    });
   } else {
     habits = [];
   }
@@ -55,7 +63,7 @@ function updateStatistics() {
   ).length;
 
   countHabits.textContent = "Total habits: " + totalHabits;
-  doneHabits.textContent = "Completed: " + completedHabits;
+  doneHabits.textContent = "Completed today: " + completedHabits;
 
   let progress =
     totalHabits === 0 ? 0 : Math.round((completedHabits / totalHabits) * 100);
@@ -178,11 +186,7 @@ completedBtn.addEventListener("click", function () {
   filterHabits = "Completed";
   renderHabits();
 });
-clearBtn.addEventListener("click", function () {
-  habits = habits.filter((habit) => !isCompletedToday(habit));
-  saveHabits();
-  renderHabits();
-});
+
 input.addEventListener("keydown", function (event) {
   if (event.key === "Enter") {
     addHabit();
