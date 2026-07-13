@@ -1,9 +1,9 @@
 let input = document.querySelector("#input");
 let addButton = document.querySelector("#addButton");
+
 let allBtn = document.querySelector("#allBtn");
 let activeBtn = document.querySelector("#activeBtn");
 let completedBtn = document.querySelector("#completedBtn");
-
 
 let list = document.querySelector("#habitsList");
 let countHabits = document.querySelector("#countHabits");
@@ -29,13 +29,28 @@ function addHabit() {
   renderHabits();
 }
 
+function formatDate(date) {
+  return date.toISOString().split("T")[0];
+}
+
+function calculateStreak(habit) {
+  let streak = 0;
+  let currentDate = new Date();
+  while (habit.completedDates.includes(formatDate(currentDate))) {
+    streak++;
+    currentDate.setDate(currentDate.getDate() - 1);
+  }
+
+  return streak;
+}
+
 function isCompletedToday(habit) {
   let today = getTodayDate();
   return habit.completedDates.includes(today);
 }
 
 function getTodayDate() {
-  return new Date().toISOString().split("T")[0];
+  return formatDate(new Date());
 }
 
 function loadHabits() {
@@ -106,10 +121,22 @@ function renderHabits() {
   for (let habit of visibleHabits) {
     let completedToday = isCompletedToday(habit);
     let index = habits.indexOf(habit);
+    let habitInfo = document.createElement("div");
+    habitInfo.classList.add("habitInfo");
+    let habitTitle = document.createElement("h3");
+    habitTitle.classList.add("habitTitle");
+    // habitCategory.classList.add("habitCategory");
+    let habitStreak = document.createElement("p");
+    habitStreak.classList.add("habitStreak");
+    let habitActions = document.createElement("div");
+    habitActions.classList.add("habitActions");
 
     let li = document.createElement("li");
-    li.textContent = habit.text;
+    habitTitle.textContent = habit.text;
+    let streak = calculateStreak(habit);
+    let dayWord = streak === 1 ? "day" : "days";
 
+    habitStreak.textContent = `🔥 ${streak} ${dayWord} streak`;
     if (completedToday) {
       li.classList.add("done");
     }
@@ -143,9 +170,16 @@ function renderHabits() {
       saveHabits();
       renderHabits();
     });
+    let habitCategory = document.createElement("p");
+    habitCategory.textContent = "General";
 
     let doneBtn = document.createElement("button");
-    doneBtn.textContent = completedToday ? "Completed today" : "Complete today";
+    doneBtn.textContent = completedToday ? "✓" : "○";
+    doneBtn.classList.add("completeBtn");
+
+    if (completedToday) {
+      doneBtn.classList.add("completed");
+    }
 
     doneBtn.addEventListener("click", function () {
       if (completedToday) {
@@ -159,11 +193,18 @@ function renderHabits() {
       renderHabits();
     });
 
-    li.appendChild(doneBtn);
-    li.appendChild(editBtn);
-    li.appendChild(deleteBtn);
+    habitInfo.appendChild(habitTitle);
+    habitInfo.appendChild(habitCategory);
+    habitInfo.appendChild(habitStreak);
 
+    habitActions.appendChild(doneBtn);
+    habitActions.appendChild(editBtn);
+    habitActions.appendChild(deleteBtn);
+
+    li.appendChild(habitInfo);
+    li.appendChild(habitActions);
     list.appendChild(li);
+    
   }
 
   updateFilterButtons();
