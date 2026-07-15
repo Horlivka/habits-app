@@ -14,11 +14,18 @@ let progressFill = document.querySelector("#progressFill");
 let progressText = document.querySelector("#progressText");
 
 let habits = [];
+const categories = {
+  learning: "📚 Learning",
+  health: "💪 Health",
+  work: "💼 Work",
+  home: "🏠 Home",
+  personal: "🎯 Personal",
+};
 let filterHabits = "All";
 
 function addHabit() {
   let habitText = input.value.trim();
-  
+
   if (!habitText) {
     return;
   }
@@ -67,7 +74,7 @@ function loadHabits() {
         habit.completedDates = [];
       }
       if (!habit.category) {
-        habit.category = "Personal";
+        habit.category = "personal";
       }
 
       return habit;
@@ -149,7 +156,7 @@ function renderHabits() {
 
     let deleteBtn = document.createElement("button");
     deleteBtn.classList.add("deleteBtn");
-    deleteBtn.textContent = "Delete";
+    deleteBtn.textContent = "🗑";
 
     deleteBtn.addEventListener("click", function () {
       habits.splice(index, 1);
@@ -160,7 +167,7 @@ function renderHabits() {
 
     let editBtn = document.createElement("button");
     editBtn.classList.add("editBtn");
-    editBtn.textContent = "Edit";
+    editBtn.textContent = "🖉";
 
     editBtn.addEventListener("click", function () {
       let newHabitText = prompt("Edit the habit", habit.text);
@@ -179,13 +186,13 @@ function renderHabits() {
       renderHabits();
     });
     let habitCategory = document.createElement("p");
-     habitCategory.classList.add("habitCategory");
-    habitCategory.textContent = habit.category;
-   
+
+    habitCategory.classList.add("habitCategory");
+    habitCategory.textContent = categories[habit.category] ?? "❓ Unknown";
 
     let doneBtn = document.createElement("button");
     doneBtn.classList.add("completeBtn");
-    doneBtn.textContent = completedToday ? "✓" : "x";
+    // doneBtn.textContent = completedToday ? "✓" : "x";
 
     if (completedToday) {
       doneBtn.classList.add("completed");
@@ -246,6 +253,3 @@ input.addEventListener("keydown", function (event) {
 addButton.addEventListener("click", addHabit);
 loadHabits();
 renderHabits();
- 
-
-console.log(habits);
