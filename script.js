@@ -1,4 +1,5 @@
 let input = document.querySelector("#input");
+let categoryList = document.querySelector("#categoryList");
 let addButton = document.querySelector("#addButton");
 
 let allBtn = document.querySelector("#allBtn");
@@ -17,12 +18,14 @@ let filterHabits = "All";
 
 function addHabit() {
   let habitText = input.value.trim();
+  
   if (!habitText) {
     return;
   }
   habits.push({
     text: habitText,
     completedDates: [],
+    category: categoryList.value,
   });
   input.value = "";
   saveHabits();
@@ -62,6 +65,9 @@ function loadHabits() {
     habits = habits.map((habit) => {
       if (!habit.completedDates) {
         habit.completedDates = [];
+      }
+      if (!habit.category) {
+        habit.category = "Personal";
       }
 
       return habit;
@@ -136,12 +142,13 @@ function renderHabits() {
     let streak = calculateStreak(habit);
     let dayWord = streak === 1 ? "day" : "days";
 
-    habitStreak.textContent = `🔥 ${streak} ${dayWord} streak`;
+    habitStreak.textContent = ` ${streak} ${dayWord} streak`;
     if (completedToday) {
       li.classList.add("done");
     }
 
     let deleteBtn = document.createElement("button");
+    deleteBtn.classList.add("deleteBtn");
     deleteBtn.textContent = "Delete";
 
     deleteBtn.addEventListener("click", function () {
@@ -152,6 +159,7 @@ function renderHabits() {
     });
 
     let editBtn = document.createElement("button");
+    editBtn.classList.add("editBtn");
     editBtn.textContent = "Edit";
 
     editBtn.addEventListener("click", function () {
@@ -171,11 +179,13 @@ function renderHabits() {
       renderHabits();
     });
     let habitCategory = document.createElement("p");
-    habitCategory.textContent = "General";
+     habitCategory.classList.add("habitCategory");
+    habitCategory.textContent = habit.category;
+   
 
     let doneBtn = document.createElement("button");
-    doneBtn.textContent = completedToday ? "✓" : "○";
     doneBtn.classList.add("completeBtn");
+    doneBtn.textContent = completedToday ? "✓" : "x";
 
     if (completedToday) {
       doneBtn.classList.add("completed");
@@ -204,7 +214,6 @@ function renderHabits() {
     li.appendChild(habitInfo);
     li.appendChild(habitActions);
     list.appendChild(li);
-    
   }
 
   updateFilterButtons();
@@ -237,3 +246,6 @@ input.addEventListener("keydown", function (event) {
 addButton.addEventListener("click", addHabit);
 loadHabits();
 renderHabits();
+ 
+
+console.log(habits);
