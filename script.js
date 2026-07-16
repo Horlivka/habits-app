@@ -99,6 +99,11 @@ function updateStatistics() {
   progressText.textContent = progress + "%";
 }
 
+function calculateProgress(habit) {
+  let progress = Math.round((habit.completedDates.length / 30) * 100);
+  return Math.min(progress, 100);
+}
+
 function updateFilterButtons() {
   let buttons = [allBtn, activeBtn, completedBtn];
 
@@ -138,21 +143,32 @@ function renderHabits() {
     habitInfo.classList.add("habitInfo");
     let habitTitle = document.createElement("h3");
     habitTitle.classList.add("habitTitle");
-    // habitCategory.classList.add("habitCategory");
     let habitStreak = document.createElement("p");
     habitStreak.classList.add("habitStreak");
     let habitActions = document.createElement("div");
     habitActions.classList.add("habitActions");
+    let habitProgressBar = document.createElement("div");
+    habitProgressBar.classList.add("habitProgressBar");
+    let habitProgressFill = document.createElement("div");
+    habitProgressFill.classList.add("habitProgressFill");
+    let habitPercentage = document.createElement("p");
+    habitPercentage.classList.add("habitPercentage");
+    let progressRow = document.createElement("div");
+    progressRow.classList.add("progressRow");
 
     let li = document.createElement("li");
     habitTitle.textContent = habit.text;
     let streak = calculateStreak(habit);
     let dayWord = streak === 1 ? "day" : "days";
 
-    habitStreak.textContent = ` ${streak} ${dayWord} streak`;
+    habitStreak.textContent = ` ${streak} ${dayWord} streak `;
     if (completedToday) {
       li.classList.add("done");
     }
+
+    let progress = calculateProgress(habit);
+    habitPercentage.textContent = progress + "%";
+    habitProgressFill.style.width = progress + "%";
 
     let deleteBtn = document.createElement("button");
     deleteBtn.classList.add("deleteBtn");
@@ -192,7 +208,6 @@ function renderHabits() {
 
     let doneBtn = document.createElement("button");
     doneBtn.classList.add("completeBtn");
-    // doneBtn.textContent = completedToday ? "✓" : "x";
 
     if (completedToday) {
       doneBtn.classList.add("completed");
@@ -218,9 +233,16 @@ function renderHabits() {
     habitActions.appendChild(editBtn);
     habitActions.appendChild(deleteBtn);
 
+    progressRow.appendChild(habitProgressBar);
+    habitProgressBar.appendChild(habitProgressFill);
+    progressRow.appendChild(habitPercentage);
+
+    habitInfo.appendChild(progressRow);
+
     li.appendChild(habitInfo);
     li.appendChild(habitActions);
     list.appendChild(li);
+   
   }
 
   updateFilterButtons();

@@ -60,16 +60,15 @@ input {
 #habitsList li {
   border: 1px solid var(--color-border);
   box-shadow: 0 4px 12px rgba(78, 68, 55, 0.06);
-  background: white ;
+  background: white;
   display: flex;
-
 }
 
 .habitInfo {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  box-shadow: 2px 4px 12px rgba(78, 68, 55, 0.06);
+  padding: 12px;
 }
 
 .habitTitle,
@@ -79,7 +78,7 @@ input {
 }
 
 .habitTitle {
-  font-size: 26px;
+  font-size: 22px;
   font-weight: 700;
   color: #1e2b1d;
 }
@@ -94,6 +93,34 @@ input {
   font-weight: 600;
 }
 
+.progressRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.habitProgressBar {
+  background: #dce8d8;
+  flex: 1;
+  
+  height: 8px;
+  border-radius: 20px;
+  overflow: hidden;
+}
+.habitProgressFill {
+  height: 100%;
+  width: 0%;
+  background: var(--color-primary);
+  transition: width 0.3s ease;
+  border-radius: inherit;
+}
+.habitPercentage {
+  font-size: 14px;
+  font-weight: 600;
+  min-width: 38px;
+  text-align: right;
+}
+
 .habitActions {
   display: flex;
   align-items: center;
@@ -103,6 +130,9 @@ input {
 
 .habitActions button {
   margin: 0;
+  width: 36px;
+  height: 36px;
+  padding: 0;
 }
 
 button {
@@ -123,7 +153,6 @@ button:hover {
 }
 
 .editBtn {
-
   border: 1px solid var(--color-primary-soft);
 }
 
@@ -132,9 +161,7 @@ button:hover {
 }
 
 .deleteBtn {
-
   border: 1px solid var(--color-primary-soft);
-
 }
 
 .deleteBtn:hover {
@@ -161,7 +188,7 @@ button:hover {
 }
 
 .completed:hover {
-background: rgb(26, 207, 26)  
+  background: rgb(26, 207, 26);
 }
 
 #addButton {
@@ -196,8 +223,6 @@ li {
 li.done {
   background: #d0ebd0;
 }
-
-
 
 #countHabits,
 #doneHabits,
