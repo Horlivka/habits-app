@@ -102,7 +102,7 @@ input {
 .habitProgressBar {
   background: #dce8d8;
   flex: 1;
-  
+
   height: 8px;
   border-radius: 20px;
   overflow: hidden;
@@ -133,6 +133,29 @@ input {
   width: 36px;
   height: 36px;
   padding: 0;
+}
+
+.habitCalendar {
+  display: flex;
+  gap: 8px;
+  border-radius: 10px;
+}
+
+.calendarDay {
+  width: 24px;
+  height: 24px;
+  font-size: 12px;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  background: var(--color-primary-soft);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.completedDay {
+  background: var(--color-primary);
+  color: white;
 }
 
 button {

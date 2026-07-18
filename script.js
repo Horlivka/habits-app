@@ -13,6 +13,8 @@ let doneHabits = document.querySelector("#doneHabits");
 let progressFill = document.querySelector("#progressFill");
 let progressText = document.querySelector("#progressText");
 
+let weekDays = ["M", "T", "W", "T", "F", "S", "S"];
+
 let habits = [];
 const categories = {
   learning: "📚 Learning",
@@ -155,6 +157,8 @@ function renderHabits() {
     habitPercentage.classList.add("habitPercentage");
     let progressRow = document.createElement("div");
     progressRow.classList.add("progressRow");
+    let calendar = document.createElement("div");
+    calendar.classList.add("habitCalendar");
 
     let li = document.createElement("li");
     habitTitle.textContent = habit.text;
@@ -225,6 +229,23 @@ function renderHabits() {
       renderHabits();
     });
 
+    let currentDate = new Date();
+
+    for (let i = 0; i < 7; i++) {
+      let date = new Date(currentDate);
+      date.setDate(date.getDate() - (6 - i));
+      let formattedDate = formatDate(date);
+      let isCompleted = habit.completedDates.includes(formattedDate);
+       let day = document.createElement("div");
+       day.classList.add("calendarDay");
+       day.textContent = date.getDate() + " " + weekDays[i];
+      if (isCompleted) {
+        day.classList.add("completedDay");
+      }
+     
+      calendar.appendChild(day);
+    }
+
     habitInfo.appendChild(habitTitle);
     habitInfo.appendChild(habitCategory);
     habitInfo.appendChild(habitStreak);
@@ -238,11 +259,11 @@ function renderHabits() {
     progressRow.appendChild(habitPercentage);
 
     habitInfo.appendChild(progressRow);
+    habitInfo.appendChild(calendar);
 
     li.appendChild(habitInfo);
     li.appendChild(habitActions);
     list.appendChild(li);
-   
   }
 
   updateFilterButtons();
