@@ -13,7 +13,7 @@ let doneHabits = document.querySelector("#doneHabits");
 let progressFill = document.querySelector("#progressFill");
 let progressText = document.querySelector("#progressText");
 
-let weekDays = ["M", "T", "W", "T", "F", "S", "S"];
+let weekDays = ["S", "M", "T", "W", "T", "F", "S"];
 
 let habits = [];
 const categories = {
@@ -137,6 +137,7 @@ function renderHabits() {
   list.textContent = "";
   let visibleHabits = getVisibleHabits();
   let today = getTodayDate();
+  let currentDate = new Date();
 
   for (let habit of visibleHabits) {
     let completedToday = isCompletedToday(habit);
@@ -229,20 +230,50 @@ function renderHabits() {
       renderHabits();
     });
 
-    let currentDate = new Date();
+    
+    
+    
 
     for (let i = 0; i < 7; i++) {
       let date = new Date(currentDate);
       date.setDate(date.getDate() - (6 - i));
       let formattedDate = formatDate(date);
       let isCompleted = habit.completedDates.includes(formattedDate);
-       let day = document.createElement("div");
-       day.classList.add("calendarDay");
-       day.textContent = date.getDate() + " " + weekDays[i];
+
+      let isToday = formattedDate === today;
+      
+      let day = document.createElement("div");
+      day.classList.add("calendarDay");
+      let weekDay = document.createElement("span");
+      weekDay.classList.add("weekDay");
+      let dayNumber = document.createElement("span");
+      dayNumber.classList.add("dayNumber");
+
+      let weekDayIndex = date.getDay();
+      dayNumber.textContent = date.getDate();
+      weekDay.textContent = weekDays[weekDayIndex];
+
       if (isCompleted) {
         day.classList.add("completedDay");
       }
-     
+      if (isToday) {
+        day.classList.add("today");
+      }
+
+      day.addEventListener("click", function () {
+        if (isCompleted) {
+          habit.completedDates = habit.completedDates.filter(
+            (completedDate) => completedDate !== formattedDate,
+          );
+        } else {
+          habit.completedDates.push(formattedDate);
+        }
+        saveHabits();
+        renderHabits();
+      })
+      day.appendChild(weekDay);
+      day.appendChild(dayNumber);
+
       calendar.appendChild(day);
     }
 

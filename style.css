@@ -137,25 +137,48 @@ input {
 
 .habitCalendar {
   display: flex;
-  gap: 8px;
-  border-radius: 10px;
+  justify-content: space-between;
+  margin-top: 10px;
 }
 
 .calendarDay {
-  width: 24px;
-  height: 24px;
-  font-size: 12px;
-  border-radius: 8px;
-  border: 1px solid var(--color-border);
-  background: var(--color-primary-soft);
+  width: 34px;
+  height: 42px;
+
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+
+  border-radius: 8px;
+  background: var(--color-primary-soft);
+  cursor: pointer;
+ transition:
+    transform 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.calendarDay:hover {
+  transform: scale(1.08);
+}
+
+.weekDay {
+  font-size: 10px;
+  color: #0507058f;
+}
+
+.dayNumber {
+  font-size: 14px;
+  font-weight: 700;
 }
 
 .completedDay {
   background: var(--color-primary);
   color: white;
+}
+
+.today {
+  outline: 2px solid #2b2b2b;
 }
 
 button {
