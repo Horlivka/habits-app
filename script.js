@@ -290,9 +290,8 @@ function createActionButtons(index, habit) {
   return habitActions;
 }
 
-function createHabitCard(habit) {
+function createHabitCard(habit, index) {
   let completedToday = isCompletedToday(habit);
-  let index = habits.indexOf(habit);
 
   let progressRow = createProgressBar(habit);
   let calendar = createCalendar(habit);
@@ -336,17 +335,20 @@ function createHabitCard(habit) {
 
 function renderHabits() {
   list.textContent = "";
+
   let visibleHabits = getVisibleHabits();
 
   for (let habit of visibleHabits) {
-    let card = createHabitCard(habit);
-    list.appendChild(createHabitCard(habit));
+    let index = habits.indexOf(habit);
+
+    let card = createHabitCard(habit, index);
+
+    list.appendChild(card);
   }
 
   updateFilterButtons();
   updateStatistics();
 }
-
 function saveHabits() {
   localStorage.setItem("habits", JSON.stringify(habits));
 }
