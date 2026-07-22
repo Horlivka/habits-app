@@ -33,6 +33,7 @@ function addHabit() {
     return;
   }
   habits.push({
+    id: Date.now(),
     text: habitText,
     completedDates: [],
     category: categoryList.value,
@@ -231,10 +232,45 @@ function updateHabits() {
   renderHabits();
 }
 
-function createActionButtons(index, habit) {
+function deleteHabit(id) {
+  habits = habits.filter((habit) => habit.id !== id);
+  updateHabits();
+}
+
+function toggleHabitComplete(habit) {
+  const today = getTodayDate();
+
+  if (isCompletedToday(habit)) {
+    habit.completedDates = habit.completedDates.filter(
+      (date) => date !== today,
+    );
+  } else {
+    habit.completedDates.push(today);
+  }
+
+  updateHabits();
+}
+
+function editHabit(habit) {
+  let newHabitText = prompt("Edit the habit", habit.text);
+  if (newHabitText === null) {
+    return;
+  }
+  newHabitText = newHabitText.trim();
+
+  if (newHabitText === "") {
+    return;
+  }
+
+  habit.text = newHabitText;
+
+  updateHabits();
+}
+
+function createActionButtons(habit) {
   let habitActions = document.createElement("div");
   habitActions.classList.add("habitActions");
-  let today = getTodayDate();
+
   let completedToday = isCompletedToday(habit);
 
   let deleteBtn = document.createElement("button");
@@ -242,9 +278,7 @@ function createActionButtons(index, habit) {
   deleteBtn.textContent = "🗑";
 
   deleteBtn.addEventListener("click", function () {
-    habits.splice(index, 1);
-
-    updateHabits();
+    deleteHabit(habit.id);
   });
 
   let editBtn = document.createElement("button");
@@ -252,20 +286,9 @@ function createActionButtons(index, habit) {
   editBtn.textContent = "🖉";
 
   editBtn.addEventListener("click", function () {
-    let newHabitText = prompt("Edit the habit", habit.text);
-    if (newHabitText === null) {
-      return;
-    }
-    newHabitText = newHabitText.trim();
-
-    if (newHabitText === "") {
-      return;
-    }
-
-    habit.text = newHabitText;
-
-    updateHabits();
+    editHabit(habit);
   });
+
   let doneBtn = document.createElement("button");
   doneBtn.classList.add("completeBtn");
 
@@ -274,14 +297,7 @@ function createActionButtons(index, habit) {
   }
 
   doneBtn.addEventListener("click", function () {
-    if (completedToday) {
-      habit.completedDates = habit.completedDates.filter(
-        (date) => date !== today,
-      );
-    } else {
-      habit.completedDates.push(today);
-    }
-    updateHabits();
+    toggleHabitComplete(habit);
   });
 
   habitActions.appendChild(doneBtn);
@@ -290,12 +306,12 @@ function createActionButtons(index, habit) {
   return habitActions;
 }
 
-function createHabitCard(habit, index) {
+function createHabitCard(habit) {
   let completedToday = isCompletedToday(habit);
 
   let progressRow = createProgressBar(habit);
   let calendar = createCalendar(habit);
-  let habitActions = createActionButtons(index, habit);
+  let habitActions = createActionButtons(habit);
 
   let habitInfo = document.createElement("div");
   habitInfo.classList.add("habitInfo");
@@ -339,10 +355,7 @@ function renderHabits() {
   let visibleHabits = getVisibleHabits();
 
   for (let habit of visibleHabits) {
-    let index = habits.indexOf(habit);
-
-    let card = createHabitCard(habit, index);
-
+    let card = createHabitCard(habit);
     list.appendChild(card);
   }
 
