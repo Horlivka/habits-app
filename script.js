@@ -15,6 +15,7 @@ let progressText = document.querySelector("#progressText");
 
 let weekDays = ["S", "M", "T", "W", "T", "F", "S"];
 const DAYS_IN_PROGRESS = 30;
+const DAYS_IN_WEEK = 7;
 
 let habits = [];
 const categories = {
@@ -87,17 +88,30 @@ function loadHabits() {
   }
 }
 
+function getTotalHabits(habits) {
+  return habits.length;
+}
+
+function getCompletedToday(habits) {
+  return habits.filter((habit) => isCompletedToday(habit)).length;
+}
+
+function calculatePercentage(completed, total) {
+  if (total === 0) {
+    return 0;
+  }
+
+  return Math.round((completed / total) * 100);
+}
+
 function updateStatistics() {
-  let totalHabits = habits.length;
-  let completedHabits = habits.filter((habit) =>
-    isCompletedToday(habit),
-  ).length;
+  let total = getTotalHabits(habits);
+  let completed = getCompletedToday(habits);
+  let progress = calculatePercentage(completed, total);
 
   countHabits.textContent = "Total habits: " + totalHabits;
   doneHabits.textContent = "Completed today: " + completedHabits;
 
-  let progress =
-    totalHabits === 0 ? 0 : Math.round((completedHabits / totalHabits) * 100);
   progressFill.style.width = progress + "%";
   progressText.textContent = progress + "%";
 }
@@ -362,6 +376,58 @@ function renderHabits() {
   updateFilterButtons();
   updateStatistics();
 }
+
+function getTotalCompletions(habits) {
+  let count = 0;
+
+  for (let habit of habits) {
+    for (let date of habit.completedDates) {
+      count++;
+    }
+  }
+  return count;
+}
+
+function getBestStreak(habits) {
+  let bestStreak = 0;
+  for (let habit of habits) {
+    let streak = calculateStreak(habit);
+
+    if (streak > bestStreak) {
+      bestStreak = streak;
+    }
+  }
+  return bestStreak;
+}
+
+function getWeeklyProgress(habits) {
+  let count = 0;
+
+  const today = new Date();
+
+  const weekAgo = new Date();
+
+  weekAgo.setDate(weekAgo.getDate() - DAYS_IN_WEEK);
+
+  for (let habit of habits) {
+    for (let date of habit.completedDates) {
+      let completed = new Date(date);
+
+      if (completed >= weekAgo && completed <= today) {
+        count++;
+      }
+    }
+  }
+  let possible = habits.length * 7;
+
+  if (possible === 0) {
+    return 0;
+  }
+  return Math.round((count / possible) * 100);
+}
+
+function updateDashboard() {}
+
 function saveHabits() {
   localStorage.setItem("habits", JSON.stringify(habits));
 }
