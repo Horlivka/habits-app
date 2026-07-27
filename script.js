@@ -13,9 +13,29 @@ let doneHabits = document.querySelector("#doneHabits");
 let progressFill = document.querySelector("#progressFill");
 let progressText = document.querySelector("#progressText");
 
+const dashboardTotalHabits = document.querySelector("#dashboardTotalHabits");
+const dashboardCompletedToday = document.querySelector(
+  "#dashboardCompletedToday",
+);
+const dashboardTotalCompletions = document.querySelector(
+  "#dashboardTotalCompletions",
+);
+const dashboardBestStreak = document.querySelector("#dashboardBestStreak");
+const dashboardWeeklyProgress = document.querySelector(
+  "#dashboardWeeklyProgress",
+);
+
 let weekDays = ["S", "M", "T", "W", "T", "F", "S"];
 const DAYS_IN_PROGRESS = 30;
 const DAYS_IN_WEEK = 7;
+
+const getCompletionsBetweenDates = (habit, startDate, endDate) => {
+  return habit.completedDates.filter((date) => {
+    const completed = new Date(date);
+
+    return completed >= startDate && completed <= endDate;
+  }).length;
+};
 
 let habits = [];
 const categories = {
@@ -105,33 +125,28 @@ function calculatePercentage(completed, total) {
 }
 
 function updateStatistics() {
-  let total = getTotalHabits(habits);
-  let completed = getCompletedToday(habits);
-  let progress = calculatePercentage(completed, total);
+  const total = getTotalHabits(habits);
+  const completed = getCompletedToday(habits);
+  const progress = calculatePercentage(completed, total);
 
-  countHabits.textContent = "Total habits: " + totalHabits;
-  doneHabits.textContent = "Completed today: " + completedHabits;
+  countHabits.textContent = "Total habits: " + total;
+  doneHabits.textContent = "Completed today: " + completed;
 
   progressFill.style.width = progress + "%";
   progressText.textContent = progress + "%";
 }
 
 function getLast30DaysCompletions(habit) {
-  let today = new Date();
-  let thirtyDaysAgo = new Date();
-  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - DAYS_IN_PROGRESS);
-  let count = 0;
-  for (let completedDate of habit.completedDates) {
-    let completed = new Date(completedDate);
-    if (completed >= thirtyDaysAgo && completed <= today) {
-      count++;
-    }
-  }
-  return count;
+  const today = new Date();
+  const thirtyDaysAgo = new Date();
+
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - (DAYS_IN_PROGRESS - 1));
+
+  return getCompletionsBetweenDates(habit, thirtyDaysAgo, today);
 }
 
 function calculateProgress(habit) {
-  let progress = Math.round(
+  const progress = Math.round(
     (getLast30DaysCompletions(habit) / DAYS_IN_PROGRESS) * 100,
   );
   return Math.min(progress, 100);
@@ -196,7 +211,7 @@ function createCalendar(habit) {
   let today = getTodayDate();
   let currentDate = new Date();
 
-  for (let i = 0; i < 7; i++) {
+  for (let i = 0; i < DAYS_IN_WEEK; i++) {
     let date = new Date(currentDate);
     date.setDate(date.getDate() - (6 - i));
     let formattedDate = formatDate(date);
@@ -321,11 +336,11 @@ function createActionButtons(habit) {
 }
 
 function createHabitCard(habit) {
-  let completedToday = isCompletedToday(habit);
+  const completedToday = isCompletedToday(habit);
 
-  let progressRow = createProgressBar(habit);
-  let calendar = createCalendar(habit);
-  let habitActions = createActionButtons(habit);
+  const progressRow = createProgressBar(habit);
+  const calendar = createCalendar(habit);
+  const habitActions = createActionButtons(habit);
 
   let habitInfo = document.createElement("div");
   habitInfo.classList.add("habitInfo");
@@ -375,23 +390,19 @@ function renderHabits() {
 
   updateFilterButtons();
   updateStatistics();
+  updateDashboard();
 }
 
 function getTotalCompletions(habits) {
-  let count = 0;
-
-  for (let habit of habits) {
-    for (let date of habit.completedDates) {
-      count++;
-    }
-  }
-  return count;
+  return habits.reduce((sum, habit) => {
+    return sum + habit.completedDates.length;
+  }, 0);
 }
 
 function getBestStreak(habits) {
   let bestStreak = 0;
-  for (let habit of habits) {
-    let streak = calculateStreak(habit);
+  for (const habit of habits) {
+    const streak = calculateStreak(habit);
 
     if (streak > bestStreak) {
       bestStreak = streak;
@@ -407,18 +418,12 @@ function getWeeklyProgress(habits) {
 
   const weekAgo = new Date();
 
-  weekAgo.setDate(weekAgo.getDate() - DAYS_IN_WEEK);
+  weekAgo.setDate(weekAgo.getDate() - (DAYS_IN_WEEK - 1));
 
-  for (let habit of habits) {
-    for (let date of habit.completedDates) {
-      let completed = new Date(date);
-
-      if (completed >= weekAgo && completed <= today) {
-        count++;
-      }
-    }
+  for (const habit of habits) {
+    count += getCompletionsBetweenDates(habit, weekAgo, today);
   }
-  let possible = habits.length * 7;
+  const possible = habits.length * DAYS_IN_WEEK;
 
   if (possible === 0) {
     return 0;
@@ -426,7 +431,19 @@ function getWeeklyProgress(habits) {
   return Math.round((count / possible) * 100);
 }
 
-function updateDashboard() {}
+function updateDashboard() {
+  const totalHabits = getTotalHabits(habits);
+  const completedToday = getCompletedToday(habits);
+  const totalCompletions = getTotalCompletions(habits);
+  const bestStreak = getBestStreak(habits);
+  const weeklyProgress = getWeeklyProgress(habits);
+
+  dashboardTotalHabits.textContent = totalHabits;
+  dashboardCompletedToday.textContent = completedToday;
+  dashboardTotalCompletions.textContent = totalCompletions;
+  dashboardBestStreak.textContent = bestStreak;
+  dashboardWeeklyProgress.textContent = weeklyProgress + "%";
+}
 
 function saveHabits() {
   localStorage.setItem("habits", JSON.stringify(habits));
