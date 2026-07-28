@@ -13,6 +13,8 @@ let doneHabits = document.querySelector("#doneHabits");
 let progressFill = document.querySelector("#progressFill");
 let progressText = document.querySelector("#progressText");
 
+
+
 const dashboardTotalHabits = document.querySelector("#dashboardTotalHabits");
 const dashboardCompletedToday = document.querySelector(
   "#dashboardCompletedToday",
@@ -205,11 +207,11 @@ function createProgressBar(habit) {
 }
 
 function createCalendar(habit) {
-  let calendar = document.createElement("div");
+  const calendar = document.createElement("div");
   calendar.classList.add("habitCalendar");
 
-  let today = getTodayDate();
-  let currentDate = new Date();
+  const today = getTodayDate();
+  const currentDate = new Date();
 
   for (let i = 0; i < DAYS_IN_WEEK; i++) {
     let date = new Date(currentDate);
@@ -262,6 +264,11 @@ function updateHabits() {
 }
 
 function deleteHabit(id) {
+  const isConfirmed = confirm("Are you sure you want to delete this habit?");
+
+  if (!isConfirmed) {
+    return;
+  }
   habits = habits.filter((habit) => habit.id !== id);
   updateHabits();
 }
@@ -300,13 +307,13 @@ function createActionButtons(habit) {
   let habitActions = document.createElement("div");
   habitActions.classList.add("habitActions");
 
-  let completedToday = isCompletedToday(habit);
+  const completedToday = isCompletedToday(habit);
 
   let deleteBtn = document.createElement("button");
   deleteBtn.classList.add("deleteBtn");
   deleteBtn.textContent = "🗑";
 
-  deleteBtn.addEventListener("click", function () {
+  deleteBtn.addEventListener("click",  () => {
     deleteHabit(habit.id);
   });
 
