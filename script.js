@@ -7,8 +7,7 @@ let activeBtn = document.querySelector("#activeBtn");
 let completedBtn = document.querySelector("#completedBtn");
 
 let list = document.querySelector("#habitsList");
-let countHabits = document.querySelector("#countHabits");
-let doneHabits = document.querySelector("#doneHabits");
+
 
 let progressFill = document.querySelector("#progressFill");
 let progressText = document.querySelector("#progressText");
@@ -131,8 +130,7 @@ function updateStatistics() {
   const completed = getCompletedToday(habits);
   const progress = calculatePercentage(completed, total);
 
-  countHabits.textContent = "Total habits: " + total;
-  doneHabits.textContent = "Completed today: " + completed;
+
 
   progressFill.style.width = progress + "%";
   progressText.textContent = progress + "%";

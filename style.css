@@ -1,10 +1,15 @@
 :root {
-  --color-bg: #ffffff;
-  --color-surface: #e7f1e8;
-  --color-text: #1f1b16;
-  --color-border: #d9d4cb;
-  --color-primary: #6fa05a;
-  --color-primary-soft: #dce8d8;
+  --color-bg: #0b1424;
+  --color-surface: #132238;
+  --color-surface-2: #1a2c45;
+  --color-primary: #2e5894;
+  --color-accent: #ace5ee;
+  --color-text: #eaf4ff;
+  --color-text-muted: #8fa7c4;
+  --color-border: rgba(172, 229, 238, 0.14);
+  --color-success: #63c7b2;
+
+  --shadow-card: 0 8px 20px rgba(0, 0, 0, 0.25);
 }
 
 * {
@@ -13,13 +18,13 @@
 
 body {
   font-family: Arial, sans-serif;
-  background: var(--color-bg);
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: flex-start;
   padding: 20px;
-  color: #222;
+  background: var(--color-bg);
+  color: var(--color-text);
 }
 
 .app {
@@ -28,7 +33,7 @@ body {
   border-radius: 16px;
   width: 100%;
   max-width: 600px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--color-border);
 }
 
 .appTitle {
@@ -37,7 +42,7 @@ body {
 
 .titleText {
   font-size: 20px;
-  color: #4a4e4e;
+  color: var(--color-text-muted);
 }
 
 .appTitle,
@@ -58,10 +63,28 @@ input {
 }
 
 #habitsList li {
+  background: var(--color-surface);
   border: 1px solid var(--color-border);
-  box-shadow: 0 4px 12px rgba(78, 68, 55, 0.06);
-  background: white;
+  box-shadow: var(--shadow-card);
+  padding: 16px;
+  margin-bottom: 10px;
+  border-radius: 14px;
+  border-left: 3px solid var(--color-primary);
   display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+#habitsList li:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(78, 68, 55, 0.12);
+  border-left: 5px solid var(--color-primary);
 }
 
 .habitInfo {
@@ -80,12 +103,21 @@ input {
 .habitTitle {
   font-size: 22px;
   font-weight: 700;
-  color: #1e2b1d;
+  color: var(--color-text);
 }
 
 .habitCategory {
-  font-size: 16px;
-  font-weight: 400;
+  display: inline-block;
+  width: fit-content;
+
+  padding: 4px 10px;
+  border-radius: 20px;
+
+  background: var(--color-surface-2);
+  color: var(--color-accent);
+
+  font-size: 13px;
+  font-weight: 600;
 }
 
 .habitStreak {
@@ -100,7 +132,7 @@ input {
 }
 
 .habitProgressBar {
-  background: #dce8d8;
+  background: var(--color-surface-2);
   flex: 1;
 
   height: 8px;
@@ -110,7 +142,7 @@ input {
 .habitProgressFill {
   height: 100%;
   width: 0%;
-  background: var(--color-primary);
+  background: var(--color-accent);
   transition: width 0.3s ease;
   border-radius: inherit;
 }
@@ -130,9 +162,19 @@ input {
 
 .habitActions button {
   margin: 0;
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
   padding: 0;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  border-radius: 50%;
+
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease;
 }
 
 .habitCalendar {
@@ -151,9 +193,9 @@ input {
   align-items: center;
 
   border-radius: 8px;
-  background: var(--color-primary-soft);
+  background: var(--color-surface-2);
   cursor: pointer;
- transition:
+  transition:
     transform 0.2s ease,
     background-color 0.2s ease;
 }
@@ -164,7 +206,7 @@ input {
 
 .weekDay {
   font-size: 10px;
-  color: #0507058f;
+  color: var(--color-text-muted);
 }
 
 .dayNumber {
@@ -186,7 +228,9 @@ button {
   margin: 7px;
   border: none;
   border-radius: 8px;
-  background: #e0e0e0;
+  background: var(--color-surface-2);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
   cursor: pointer;
   font-size: 14px;
   transition:
@@ -200,6 +244,7 @@ button:hover {
 
 .editBtn {
   border: 1px solid var(--color-primary-soft);
+  background: var(--color-primary-soft);
 }
 
 .editBtn:hover {
@@ -215,15 +260,11 @@ button:hover {
 }
 
 .completeBtn {
-  background: white;
-  color: #ffffff;
+  background: transparent;
+  color: var(--color-accent);
   width: 36px;
   height: 36px;
-  border: 1px solid black;
-  border-radius: 50%;
-  transition:
-    background-color 0.2s ease,
-    transform 0.2s ease;
+  border: 2px solid var(--color-primary);
 }
 .completeBtn:hover {
   background: var(--color-primary-soft);
@@ -231,6 +272,7 @@ button:hover {
 
 .completed {
   background: var(--color-primary);
+  color: white;
 }
 
 .completed:hover {
@@ -238,8 +280,8 @@ button:hover {
 }
 
 #addButton {
-  background: var(--color-primary);
-  color: white;
+  background: var(--color-accent);
+  color: #0b1424;
 }
 
 .filters button.done {
@@ -253,25 +295,11 @@ ul {
   margin-top: 20px;
 }
 
-li {
-  background: #ffffff;
-  padding: 16px;
-  margin-bottom: 10px;
-  border-radius: 10px;
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  align-items: flex-start;
-}
-
 li.done {
-  background: #d0ebd0;
+  background: rgba(99, 199, 178, 0.15);
+  border-left-color: var(--color-success);
 }
 
-#countHabits,
-#doneHabits,
 #progressText {
   font-weight: bold;
 }
@@ -291,6 +319,59 @@ li.done {
   border-radius: 20px;
   overflow: hidden;
   margin-top: 16px;
+}
+
+.dashboard {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.statCard {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: 16px;
+  text-align: center;
+  box-shadow: var(--shadow-card);
+
+  animation: fadeIn 0.3s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.statCard:hover {
+  transform: translateY(-3px);
+}
+
+.statCard h3 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.statCard p {
+  margin: 10px 0 0;
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.statCard:last-child {
+  grid-column: span 2;
 }
 
 @media (max-width: 480px) {
@@ -326,5 +407,9 @@ li.done {
   .habitActions {
     width: 100%;
     justify-content: flex-end;
+  }
+
+  .dashboard {
+    grid-template-columns: 1fr;
   }
 }
