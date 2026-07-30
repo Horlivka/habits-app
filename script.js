@@ -8,11 +8,8 @@ let completedBtn = document.querySelector("#completedBtn");
 
 let list = document.querySelector("#habitsList");
 
-
 let progressFill = document.querySelector("#progressFill");
 let progressText = document.querySelector("#progressText");
-
-
 
 const dashboardTotalHabits = document.querySelector("#dashboardTotalHabits");
 const dashboardCompletedToday = document.querySelector(
@@ -129,8 +126,6 @@ function updateStatistics() {
   const total = getTotalHabits(habits);
   const completed = getCompletedToday(habits);
   const progress = calculatePercentage(completed, total);
-
-
 
   progressFill.style.width = progress + "%";
   progressText.textContent = progress + "%";
@@ -311,7 +306,7 @@ function createActionButtons(habit) {
   deleteBtn.classList.add("deleteBtn");
   deleteBtn.textContent = "🗑";
 
-  deleteBtn.addEventListener("click",  () => {
+  deleteBtn.addEventListener("click", () => {
     deleteHabit(habit.id);
   });
 
@@ -325,6 +320,7 @@ function createActionButtons(habit) {
 
   let doneBtn = document.createElement("button");
   doneBtn.classList.add("completeBtn");
+  doneBtn.textContent = "✓";
 
   if (completedToday) {
     doneBtn.classList.add("completed");
@@ -338,6 +334,29 @@ function createActionButtons(habit) {
   habitActions.appendChild(deleteBtn);
   habitActions.appendChild(editBtn);
   return habitActions;
+}
+
+function createEmptyState(message) {
+  const emptyState = document.createElement("div");
+
+  emptyState.classList.add("emptyState");
+
+  emptyState.innerHTML = `
+    <div>🌱</div>
+    <h3>No habits yet</h3>
+    <p>Start building your first habit today</p>
+    <button class="emptyButton">
+      Create habit
+    </button>
+  `;
+
+  const button = emptyState.querySelector(".emptyButton");
+
+  button.addEventListener("click", () => {
+    input.focus();
+  });
+
+  return emptyState;
 }
 
 function createHabitCard(habit) {
@@ -387,6 +406,11 @@ function renderHabits() {
   list.textContent = "";
 
   let visibleHabits = getVisibleHabits();
+
+  if (visibleHabits.length === 0) {
+    list.appendChild(createEmptyState("No habits yet"));
+    return;
+  }
 
   for (let habit of visibleHabits) {
     let card = createHabitCard(habit);
