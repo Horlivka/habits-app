@@ -23,7 +23,7 @@ const dashboardWeeklyProgress = document.querySelector(
   "#dashboardWeeklyProgress",
 );
 
-let weekDays = ["S", "M", "T", "W", "T", "F", "S"];
+const weekDays = ["S", "M", "T", "W", "T", "F", "S"];
 const DAYS_IN_PROGRESS = 30;
 const DAYS_IN_WEEK = 7;
 
@@ -43,10 +43,10 @@ const categories = {
   home: "🏠 Home",
   personal: "🎯 Personal",
 };
-let filterHabits = "All";
+let activeFilter = "All";
 
 function addHabit() {
-  let habitText = input.value.trim();
+  const habitText = input.value.trim();
 
   if (!habitText) {
     return;
@@ -58,7 +58,7 @@ function addHabit() {
     category: categoryList.value,
   });
   input.value = "";
-  updateHabits();
+  saveAndRender();
 }
 
 function formatDate(date) {
@@ -67,7 +67,7 @@ function formatDate(date) {
 
 function calculateStreak(habit) {
   let streak = 0;
-  let currentDate = new Date();
+  const currentDate = new Date();
   while (habit.completedDates.includes(formatDate(currentDate))) {
     streak++;
     currentDate.setDate(currentDate.getDate() - 1);
@@ -77,7 +77,7 @@ function calculateStreak(habit) {
 }
 
 function isCompletedToday(habit) {
-  let today = getTodayDate();
+  const today = getTodayDate();
   return habit.completedDates.includes(today);
 }
 
@@ -86,22 +86,22 @@ function getTodayDate() {
 }
 
 function loadHabits() {
-  let savedHabits = localStorage.getItem("habits");
+  const savedHabits = localStorage.getItem("habits");
 
-  if (savedHabits) {
+  if (!savedHabits) {
+    habits = [];
+    return;
+  }
+
+  try {
     habits = JSON.parse(savedHabits);
 
-    habits = habits.map((habit) => {
-      if (!habit.completedDates) {
-        habit.completedDates = [];
-      }
-      if (!habit.category) {
-        habit.category = "personal";
-      }
-
-      return habit;
-    });
-  } else {
+    habits = habits.map((habit) => ({
+      ...habit,
+      completedDates: habit.completedDates ?? [],
+      category: habit.category ?? "personal",
+    }));
+  } catch (error) {
     habits = [];
   }
 }
@@ -148,46 +148,46 @@ function calculateProgress(habit) {
 }
 
 function updateFilterButtons() {
-  let buttons = [allBtn, activeBtn, completedBtn];
+  const buttons = [allBtn, activeBtn, completedBtn];
 
-  for (let button of buttons) {
+  for (const button of buttons) {
     button.classList.remove("done");
   }
 
-  let filterButtons = {
+  const filterButtons = {
     All: allBtn,
     Active: activeBtn,
     Completed: completedBtn,
   };
-  filterButtons[filterHabits].classList.add("done");
+  filterButtons[activeFilter].classList.add("done");
 }
 
 function getVisibleHabits() {
-  let visibleHabits = [...habits];
-
-  if (filterHabits === "Active") {
-    visibleHabits = habits.filter((habit) => !isCompletedToday(habit));
-  } else if (filterHabits === "Completed") {
-    visibleHabits = habits.filter((habit) => isCompletedToday(habit));
+  if (activeFilter === "Active") {
+    return habits.filter((habit) => !isCompletedToday(habit));
   }
 
-  return visibleHabits;
+  if (activeFilter === "Completed") {
+    return habits.filter((habit) => isCompletedToday(habit));
+  }
+
+  return habits;
 }
 
 function createProgressBar(habit) {
-  let habitProgressBar = document.createElement("div");
+  const habitProgressBar = document.createElement("div");
   habitProgressBar.classList.add("habitProgressBar");
 
-  let habitProgressFill = document.createElement("div");
+  const habitProgressFill = document.createElement("div");
   habitProgressFill.classList.add("habitProgressFill");
 
-  let habitPercentage = document.createElement("p");
+  const habitPercentage = document.createElement("p");
   habitPercentage.classList.add("habitPercentage");
 
-  let progressRow = document.createElement("div");
+  const progressRow = document.createElement("div");
   progressRow.classList.add("progressRow");
 
-  let progress = calculateProgress(habit);
+  const progress = calculateProgress(habit);
 
   habitPercentage.textContent = progress + "%";
   habitProgressFill.style.width = progress + "%";
@@ -207,21 +207,21 @@ function createCalendar(habit) {
   const currentDate = new Date();
 
   for (let i = 0; i < DAYS_IN_WEEK; i++) {
-    let date = new Date(currentDate);
+    const date = new Date(currentDate);
     date.setDate(date.getDate() - (6 - i));
-    let formattedDate = formatDate(date);
-    let isCompleted = habit.completedDates.includes(formattedDate);
+    const formattedDate = formatDate(date);
+    const isCompleted = habit.completedDates.includes(formattedDate);
 
-    let isToday = formattedDate === today;
+    const isToday = formattedDate === today;
 
-    let day = document.createElement("div");
+    const day = document.createElement("div");
     day.classList.add("calendarDay");
-    let weekDay = document.createElement("span");
+    const weekDay = document.createElement("span");
     weekDay.classList.add("weekDay");
-    let dayNumber = document.createElement("span");
+    const dayNumber = document.createElement("span");
     dayNumber.classList.add("dayNumber");
 
-    let weekDayIndex = date.getDay();
+    const weekDayIndex = date.getDay();
     dayNumber.textContent = date.getDate();
     weekDay.textContent = weekDays[weekDayIndex];
 
@@ -233,6 +233,7 @@ function createCalendar(habit) {
     }
 
     day.addEventListener("click", function () {
+      const isCompleted = habit.completedDates.includes(formattedDate);
       if (isCompleted) {
         habit.completedDates = habit.completedDates.filter(
           (completedDate) => completedDate !== formattedDate,
@@ -251,7 +252,7 @@ function createCalendar(habit) {
   return calendar;
 }
 
-function updateHabits() {
+function saveAndRender() {
   saveHabits();
   renderHabits();
 }
@@ -263,7 +264,7 @@ function deleteHabit(id) {
     return;
   }
   habits = habits.filter((habit) => habit.id !== id);
-  updateHabits();
+  saveAndRender();
 }
 
 function toggleHabitComplete(habit) {
@@ -277,7 +278,7 @@ function toggleHabitComplete(habit) {
     habit.completedDates.push(today);
   }
 
-  updateHabits();
+  saveAndRender();
 }
 
 function editHabit(habit) {
@@ -293,16 +294,16 @@ function editHabit(habit) {
 
   habit.text = newHabitText;
 
-  updateHabits();
+  saveAndRender();
 }
 
 function createActionButtons(habit) {
-  let habitActions = document.createElement("div");
+  const habitActions = document.createElement("div");
   habitActions.classList.add("habitActions");
 
   const completedToday = isCompletedToday(habit);
 
-  let deleteBtn = document.createElement("button");
+  const deleteBtn = document.createElement("button");
   deleteBtn.classList.add("deleteBtn");
   deleteBtn.textContent = "🗑";
 
@@ -310,7 +311,7 @@ function createActionButtons(habit) {
     deleteHabit(habit.id);
   });
 
-  let editBtn = document.createElement("button");
+  const editBtn = document.createElement("button");
   editBtn.classList.add("editBtn");
   editBtn.textContent = "🖉";
 
@@ -318,7 +319,7 @@ function createActionButtons(habit) {
     editHabit(habit);
   });
 
-  let doneBtn = document.createElement("button");
+  const doneBtn = document.createElement("button");
   doneBtn.classList.add("completeBtn");
   doneBtn.textContent = "✓";
 
@@ -336,15 +337,15 @@ function createActionButtons(habit) {
   return habitActions;
 }
 
-function createEmptyState(message) {
+function createEmptyState(title, description) {
   const emptyState = document.createElement("div");
 
   emptyState.classList.add("emptyState");
 
   emptyState.innerHTML = `
     <div>🌱</div>
-    <h3>No habits yet</h3>
-    <p>Start building your first habit today</p>
+     <h3>${title}</h3>
+    <p>${description}</p>
     <button class="emptyButton">
       Create habit
     </button>
@@ -366,27 +367,27 @@ function createHabitCard(habit) {
   const calendar = createCalendar(habit);
   const habitActions = createActionButtons(habit);
 
-  let habitInfo = document.createElement("div");
+  const habitInfo = document.createElement("div");
   habitInfo.classList.add("habitInfo");
 
-  let habitTitle = document.createElement("h3");
+  const habitTitle = document.createElement("h3");
   habitTitle.classList.add("habitTitle");
 
-  let habitStreak = document.createElement("p");
+  const habitStreak = document.createElement("p");
   habitStreak.classList.add("habitStreak");
 
-  let li = document.createElement("li");
+  const li = document.createElement("li");
   habitTitle.textContent = habit.text;
 
-  let streak = calculateStreak(habit);
-  let dayWord = streak === 1 ? "day" : "days";
+  const streak = calculateStreak(habit);
+  const dayWord = streak === 1 ? "day" : "days";
 
   habitStreak.textContent = ` ${streak} ${dayWord} streak `;
   if (completedToday) {
     li.classList.add("done");
   }
 
-  let habitCategory = document.createElement("p");
+  const habitCategory = document.createElement("p");
 
   habitCategory.classList.add("habitCategory");
   habitCategory.textContent = categories[habit.category] ?? "❓ Unknown";
@@ -405,16 +406,26 @@ function createHabitCard(habit) {
 function renderHabits() {
   list.textContent = "";
 
-  let visibleHabits = getVisibleHabits();
+  const visibleHabits = getVisibleHabits();
 
   if (visibleHabits.length === 0) {
-    list.appendChild(createEmptyState("No habits yet"));
-    return;
-  }
-
-  for (let habit of visibleHabits) {
-    let card = createHabitCard(habit);
-    list.appendChild(card);
+    if (habits.length === 0) {
+      list.appendChild(
+        createEmptyState(
+          "No habits yet",
+          "Start building your first habit today",
+        ),
+      );
+    } else {
+      list.appendChild(
+        createEmptyState("No habits found", "Try changing your filter"),
+      );
+    }
+  } else {
+    for (let habit of visibleHabits) {
+      const card = createHabitCard(habit);
+      list.appendChild(card);
+    }
   }
 
   updateFilterButtons();
@@ -479,15 +490,15 @@ function saveHabits() {
 }
 
 allBtn.addEventListener("click", function () {
-  filterHabits = "All";
+  activeFilter = "All";
   renderHabits();
 });
 activeBtn.addEventListener("click", function () {
-  filterHabits = "Active";
+  activeFilter = "Active";
   renderHabits();
 });
 completedBtn.addEventListener("click", function () {
-  filterHabits = "Completed";
+  activeFilter = "Completed";
   renderHabits();
 });
 
