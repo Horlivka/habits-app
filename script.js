@@ -52,7 +52,7 @@ function addHabit() {
     return;
   }
   habits.push({
-    id: Date.now(),
+    id: crypto.randomUUID(),
     text: habitText,
     completedDates: [],
     category: categoryList.value,
@@ -174,7 +174,7 @@ function getVisibleHabits() {
   return habits;
 }
 
-function createProgressBar(habit) {
+function createProgressBar(progress) {
   const habitProgressBar = document.createElement("div");
   habitProgressBar.classList.add("habitProgressBar");
 
@@ -187,13 +187,13 @@ function createProgressBar(habit) {
   const progressRow = document.createElement("div");
   progressRow.classList.add("progressRow");
 
-  const progress = calculateProgress(habit);
-
   habitPercentage.textContent = progress + "%";
   habitProgressFill.style.width = progress + "%";
 
   progressRow.appendChild(habitProgressBar);
+
   habitProgressBar.appendChild(habitProgressFill);
+
   progressRow.appendChild(habitPercentage);
 
   return progressRow;
@@ -267,7 +267,11 @@ function deleteHabit(id) {
   saveAndRender();
 }
 
-function toggleHabitComplete(habit) {
+function toggleHabitComplete(id) {
+  const habit = habits.find((habit) => habit.id === id);
+
+  if (!habit) return;
+
   const today = getTodayDate();
 
   if (isCompletedToday(habit)) {
@@ -281,7 +285,10 @@ function toggleHabitComplete(habit) {
   saveAndRender();
 }
 
-function editHabit(habit) {
+function editHabit(id) {
+  const habit = habits.find((habit) => habit.id === id);
+
+  if (!habit) return;
   let newHabitText = prompt("Edit the habit", habit.text);
   if (newHabitText === null) {
     return;
@@ -316,7 +323,7 @@ function createActionButtons(habit) {
   editBtn.textContent = "🖉";
 
   editBtn.addEventListener("click", function () {
-    editHabit(habit);
+    editHabit(habit.id);
   });
 
   const doneBtn = document.createElement("button");
@@ -328,12 +335,10 @@ function createActionButtons(habit) {
   }
 
   doneBtn.addEventListener("click", function () {
-    toggleHabitComplete(habit);
+    toggleHabitComplete(habit.id);
   });
 
-  habitActions.appendChild(doneBtn);
-  habitActions.appendChild(deleteBtn);
-  habitActions.appendChild(editBtn);
+  habitActions.append(doneBtn, editBtn, deleteBtn);
   return habitActions;
 }
 
@@ -360,47 +365,59 @@ function createEmptyState(title, description) {
   return emptyState;
 }
 
-function createHabitCard(habit) {
-  const completedToday = isCompletedToday(habit);
+function prepareHabitData(habit) {
+  return {
+    habit,
+    completedToday: isCompletedToday(habit),
+    streak: calculateStreak(habit),
+    progress: calculateProgress(habit),
+  };
+}
 
+function createHabitCard(habit) {
+  const data = prepareHabitData(habit);
+  const info = createHabitInfo(habit, data.streak);
   const progressRow = createProgressBar(habit);
   const calendar = createCalendar(habit);
   const habitActions = createActionButtons(habit);
 
+  const li = document.createElement("li");
+
+  if (data.completedToday) {
+    li.classList.add("done");
+  }
+
+  info.appendChild(progressRow);
+  info.appendChild(calendar);
+
+  li.appendChild(info);
+  li.appendChild(habitActions);
+  return li;
+}
+
+function createHabitInfo(habit, streak) {
   const habitInfo = document.createElement("div");
   habitInfo.classList.add("habitInfo");
 
   const habitTitle = document.createElement("h3");
   habitTitle.classList.add("habitTitle");
+  habitTitle.textContent = habit.text;
+
+  const habitCategory = document.createElement("p");
+  habitCategory.classList.add("habitCategory");
+  habitCategory.textContent = categories[habit.category] ?? "❓ Unknown";
 
   const habitStreak = document.createElement("p");
   habitStreak.classList.add("habitStreak");
 
-  const li = document.createElement("li");
-  habitTitle.textContent = habit.text;
-
-  const streak = calculateStreak(habit);
   const dayWord = streak === 1 ? "day" : "days";
 
   habitStreak.textContent = ` ${streak} ${dayWord} streak `;
-  if (completedToday) {
-    li.classList.add("done");
-  }
-
-  const habitCategory = document.createElement("p");
-
-  habitCategory.classList.add("habitCategory");
-  habitCategory.textContent = categories[habit.category] ?? "❓ Unknown";
 
   habitInfo.appendChild(habitTitle);
   habitInfo.appendChild(habitCategory);
   habitInfo.appendChild(habitStreak);
-  habitInfo.appendChild(progressRow);
-  habitInfo.appendChild(calendar);
-
-  li.appendChild(habitInfo);
-  li.appendChild(habitActions);
-  return li;
+  return habitInfo;
 }
 
 function renderHabits() {
