@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HabitsApp</title>
-    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
@@ -13,8 +13,8 @@
         <h1 class="appTitle">Habit Tracker Pro</h1>
         <p class="titleText">Build better habits every day.</p>
         <div class="addForm">
-            <input type="text" id="input">
-            <select id="categoryList">
+            <input type="text" id="input" aria-label="Habit name">
+            <select id="categoryList" aria-label="Habit category">
                 <option value="health">Health</option>
                 <option value="learning">Learning</option>
                 <option value="work">Work</option>
@@ -79,7 +79,7 @@
 
 
 
-    <script src="/script.js"></script>
+    <script type="module" src="script.js"></script>
 </body>
 
 </html>
