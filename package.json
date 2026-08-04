@@ -1,0 +1,24 @@
+{
+  "name": "xipho",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "A simple Habit Tracker built with HTML, CSS and Vanilla JavaScript.",
+  "main": "index.js",
+  "scripts": {
+    "test": "vitest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Horlivka/habits-app.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Horlivka/habits-app/issues"
+  },
+  "homepage": "https://github.com/Horlivka/habits-app#readme",
+  "devDependencies": {
+    "vitest": "^4.1.10"
+  }
+}
