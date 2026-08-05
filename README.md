@@ -4,7 +4,8 @@ A habit tracking app built with vanilla JavaScript, HTML, and CSS — no framewo
 
 **[Live demo](https://habits-app-navy.vercel.app/)**
 
-<img width="1920" height="953" alt="image" src="https://github.com/user-attachments/assets/1b202573-5dee-4c95-aa09-04e26a5306e4" />
+<img width="1887" height="950" alt="image" src="https://github.com/user-attachments/assets/08a0f00f-cb26-45bd-a9ff-f2743b1d9b59" />
+
 
 
 
