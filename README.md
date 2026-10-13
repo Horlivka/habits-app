@@ -4,7 +4,7 @@ A habit tracking app built with vanilla JavaScript, HTML, and CSS — no framewo
 
 **[Live demo](https://habits-app-navy.vercel.app/)**
 
-<img width="1887" height="950" alt="Screenshot of Habit Tracker Pro showing daily habits with streaks and categories. " src="https://github.com/user-attachments/assets/08a0f00f-cb26-45bd-a9ff-f2743b1d9b59" />
+<img width="1887" height="950" alt="Screenshot of Habit Tracker Pro showing daily habits with streaks and categories." src="https://github.com/user-attachments/assets/08a0f00f-cb26-45bd-a9ff-f2743b1d9b59" />
 
 
 
