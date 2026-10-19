@@ -15,4 +15,16 @@ describe("formatDate", () => {
   it("formats a date as YYYY-MM-DD", () => {
     expect(formatDate(new Date(2026, 0, 15))).toBe("2026-01-15");
   });
+
+  it("adds a leading zero to a single-digit day", () => {
+    const date = new Date(2026, 0, 5, 12, 0);
+    const result = formatDate(date);
+    expect(result).toBe("2026-01-05");
+  });
+
+  it("keeps the same day just after midnight", () => {
+    const date = new Date(2026, 0, 15, 0, 30);
+    const result = formatDate(date);
+    expect(result).toBe("2026-01-15");
+  });
 });
