@@ -27,4 +27,10 @@ describe("formatDate", () => {
     const result = formatDate(date);
     expect(result).toBe("2026-01-15");
   });
+
+  it("keeps the same day just before midnight", () => {
+    const date = new Date(2026, 0, 15, 23, 30);
+    const result = formatDate(date);
+    expect(result).toBe("2026-01-15");
+  })
 });
